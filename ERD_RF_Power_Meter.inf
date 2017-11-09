@@ -1,0 +1,57 @@
+; Modified and borrowed from Arduino project.
+
+[Strings]
+DriverPackageDisplayName="Enhanced Radio Devices RF Power Meter USB Driver"
+ManufacturerName="Enhanced Radio Devices"
+ServiceName="USB RS-232 Emulation Driver"
+erd.name="ERD RF Power Meter V1.2"
+
+[DefaultInstall]
+CopyINF=ERD_RF_Power_Meter.inf
+
+[Version]
+Class=Ports
+ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
+Signature="$Windows NT$"
+Provider=%ManufacturerName%
+DriverPackageDisplayName=%DriverPackageDisplayName%
+DriverVer=01/31/2017,1.0.0.0
+
+[Manufacturer]
+%ManufacturerName%=DeviceList, NTamd64, NTia64
+
+[DestinationDirs]
+FakeModemCopyFileSection=12
+DefaultDestDir=12
+
+[DeviceList]
+%erd.name%=DriverInstall, USB\VID_03EB&PID_2044
+
+[DeviceList.NTamd64]
+%erd.name%=DriverInstall, USB\VID_03EB&PID_2044
+
+[DeviceList.NTia64]
+%erd.name%=DriverInstall, USB\VID_03EB&PID_2044
+
+[DriverInstall]
+include=mdmcpq.inf,usb.inf
+CopyFiles = FakeModemCopyFileSection
+AddReg=DriverAddReg
+
+[DriverAddReg]
+HKR,,DevLoader,,*ntkern 
+HKR,,NTMPDriver,,usbser.sys 
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+[DriverInstall.Services]
+include=mdmcpq.inf
+AddService=usbser, 0x00000002, DriverService
+
+[DriverService]
+DisplayName=%ServiceName%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\usbser.sys
+LoadOrderGroup=Base
+
