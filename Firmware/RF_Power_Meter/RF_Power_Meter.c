@@ -1,7 +1,5 @@
-/* (c) 2017 Enhanced Radio Devices */
-//
-// TODO
-// ...
+/* Enhanced Radio Devices */
+/* 2018 by Nigel Vander Houwen <nigel@enhancedradio.com> */
 
 #include "RF_Power_Meter.h"
 

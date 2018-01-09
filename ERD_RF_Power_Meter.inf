@@ -15,7 +15,7 @@ ClassGuid={4D36E978-E325-11CE-BFC1-08002BE10318}
 Signature="$Windows NT$"
 Provider=%ManufacturerName%
 DriverPackageDisplayName=%DriverPackageDisplayName%
-DriverVer=01/31/2017,1.0.0.0
+DriverVer=01/08/2018,1.0.0.0
 
 [Manufacturer]
 %ManufacturerName%=DeviceList, NTamd64, NTia64
@@ -25,13 +25,13 @@ FakeModemCopyFileSection=12
 DefaultDestDir=12
 
 [DeviceList]
-%erd.name%=DriverInstall, USB\VID_03EB&PID_2044
+%erd.name%=DriverInstall, USB\VID_04D8&PID_EF5B
 
 [DeviceList.NTamd64]
-%erd.name%=DriverInstall, USB\VID_03EB&PID_2044
+%erd.name%=DriverInstall, USB\VID_04D8&PID_EF5B
 
 [DeviceList.NTia64]
-%erd.name%=DriverInstall, USB\VID_03EB&PID_2044
+%erd.name%=DriverInstall, USB\VID_04D8&PID_EF5B
 
 [DriverInstall]
 include=mdmcpq.inf,usb.inf

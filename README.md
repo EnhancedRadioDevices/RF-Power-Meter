@@ -7,10 +7,6 @@ The device is available to the host system as a USB serial device, which when ac
 
 This repository contains the source code to be compiled with AVR-GCC, and uploaded to the device via ATMEL's FLIP programmer or the dfu-programmer utility.
 
-## Supported Commands
-### HELP
-The 'HELP' command will print a short message referencing the project page containing documentation.
-
 ## Drivers
 The Power Meter board is automatically recognized as a USB serial device under OSX and Linux, however, windows requires a driver to associate the device with the built in USB serial device drivers.
 
@@ -18,8 +14,8 @@ When first attaching the device to a windows based host, windows will attempt to
 
 Once you have installed the driver, the Power Meter will register as a COM port device under windows, and you may access it with any serial/terminal application of your preference.
 
-### Windows 8 Users
-During the driver installation process on Windows 8 operating systems you may encounter *"The third-party INF does not contain digital signature information"* preventing the installation of the included driver.  The steps below outline the process for disabling driver signature enforcement on Windows 8/8.1 systems.
+### Windows Users
+During the driver installation process on Windows 8 operating systems and above you may encounter *"The third-party INF does not contain digital signature information"* preventing the installation of the included driver.  The steps below outline the process for disabling driver signature enforcement on Windows 8/8.1 systems.
 
 **NOTE:** If your system uses BitLocker Drive Encryption, you will need your encryption key to gain access to advanced settings to disable driver signature enforcement.
 

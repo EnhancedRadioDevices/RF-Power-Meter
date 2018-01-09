@@ -1,4 +1,6 @@
-/* (c) 2017 Enhanced Radio Devices */
+/* Enhanced Radio Devices */
+/* 2018 by Nigel Vander Houwen <nigel@enhancedradio.com> */
+
 #ifndef _RF_Power_Meter_H_
 #define _RF_Power_Meter_H_
 
@@ -49,7 +51,6 @@
 // Schedule
 #define READ_RF_DELAY 4 // Ticks. ~1s
 
-
 // EEPROM Offsets
 
 
@@ -68,15 +69,10 @@ volatile uint8_t schedule_read_rf = 0;
 static FILE USBSerialStream;
 
 // Help string
-const char STR_Help_Info[] PROGMEM = "\r\nVisit LINK_HERE for full docs.";
+const char STR_Help_Info[] PROGMEM = "\r\nVisit https://github.com/EnhancedRadioDevices/RF-Power-Meter for full docs.";
 
 // Reused strings
 #ifdef ENABLECOLORS
-//	const char STR_Color_Red[] PROGMEM = "\x1b[31m";
-//	const char STR_Color_Green[] PROGMEM = "\x1b[32m";
-//	const char STR_Color_Blue[] PROGMEM = "\x1b[34m";
-//	const char STR_Color_Cyan[] PROGMEM = "\x1b[36m";
-//	const char STR_Color_Reset[] PROGMEM = "\x1b[0m";
 	const char STR_Unrecognized[] PROGMEM = "\r\n\x1b[31mINVALID COMMAND\x1b[0m";
 #else
 	const char STR_Unrecognized[] PROGMEM = "\r\nINVALID COMMAND";
