@@ -35,7 +35,7 @@
 
 #define SOFTWARE_STR "\r\nERD RF Power Meter"
 #define HARDWARE_VERS "1.2"
-#define SOFTWARE_VERS "1.0"
+#define SOFTWARE_VERS "1.1"
 
 // Serial input
 #define DATA_BUFF_LEN 32
@@ -52,7 +52,10 @@
 #define READ_RF_DELAY 4 // Ticks. ~1s
 
 // EEPROM Offsets
-
+// Calibration values
+#define EEPROM_OFFSET_RF_CAL_SLOPE 0 // 1 byte * 27 Values (100MHz blocks) - Calibrate the frequency response slope
+#define EEPROM_OFFSET_RF_CAL_INTERCEPT 27 // 1 byte * 27 Values (100MHz Blocks) - Calibrate the frequency response intercept
+//#define EEPROM_OFFSET_NEXT 54
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~ Globals
@@ -69,25 +72,36 @@ volatile uint8_t schedule_read_rf = 0;
 static FILE USBSerialStream;
 
 // Help string
-const char STR_Help_Info[] PROGMEM = "\r\nVisit https://github.com/EnhancedRadioDevices/RF-Power-Meter for full docs.";
+const char STR_Help_Info[] PROGMEM = "\r\n\"F<Frequency in MHz>\" to load the appropriate calibration values.\r\n\"R<1-10>\" to set the interval between readings (in seconds).\r\n\r\nVisit https://github.com/EnhancedRadioDevices/RF-Power-Meter for full docs.";
 
 // Reused strings
 #ifdef ENABLECOLORS
 	const char STR_Unrecognized[] PROGMEM = "\r\n\x1b[31mINVALID COMMAND\x1b[0m";
+	const char STR_Freq_Range[] PROGMEM = "\r\n\x1b[31mFrequency out of range. Using defaults.\x1b[0m";
 #else
 	const char STR_Unrecognized[] PROGMEM = "\r\nINVALID COMMAND";
+	const char STR_Freq_Range[] PROGMEM = "\r\nFrequency out of range. Using defaults.";
 #endif	
 
 const char STR_Backspace[] PROGMEM = "\x1b[D \x1b[D";
+const char STR_Load_Cal[] PROGMEM = "\r\nLoading calibration values for frequency: ";
+const char STR_Rate_Set[] PROGMEM = "\r\nPrinting rate set to ";
+const char STR_Slope_Set[] PROGMEM = "\r\nSlope set.";
+const char STR_Intercept_Set[] PROGMEM = "\r\nIntercept set.";
 
 // Command strings
 const char STR_Command_HELP[] PROGMEM = "HELP";
 const char STR_Command_DEBUG[] PROGMEM = "DEBUG";
+const char STR_Command_SETSLOPE[] PROGMEM = "SETSLOPE";
+const char STR_Command_SETINTERCEPT[] PROGMEM = "SETINTERCEPT";
 
 // State Variables
 char * DATA_IN;
 uint8_t DATA_IN_POS = 0;
 uint8_t BOOT_RESET_VECTOR = 0;
+float RF_FREQ_SLOPE = 0.0;
+uint8_t RF_FREQ_INTERCEPT = 0;
+uint8_t PRINTING_RATE = 1;
 
 /** LUFA CDC Class driver interface configuration and state information.
  * This structure is passed to all CDC Class driver functions, so that
@@ -130,12 +144,17 @@ static inline void run_lufa(void);
 
 // EEPROM Read & Write
 static inline void EEPROM_Reset(void);
+static inline void EEPROM_Write_RF_Cal_Slope(uint8_t span, float value);
+static inline float EEPROM_Read_RF_Cal_Slope(uint8_t span);
+static inline void EEPROM_Write_RF_Cal_Intercept(uint8_t span, uint8_t value);
+static inline uint8_t EEPROM_Read_RF_Cal_Intercept(uint8_t span);
 
 // DEBUG
 static inline void DEBUG_Dump(void);
 
 // ADC
 static inline int16_t ADC_Read_RF(void);
+static inline void Load_RF_Calibration(uint16_t freq);
 
 // LED
 static inline void Set_LED(int8_t state);
@@ -146,6 +165,7 @@ static inline void PRINT_Status(void);
 static inline void PRINT_Help(void);
 
 // Input
+static inline long INPUT_Parse_num(void);
 static inline void INPUT_Clear(void);
 static inline void INPUT_Parse(void);
 
