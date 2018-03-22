@@ -94,6 +94,7 @@ const char STR_Command_HELP[] PROGMEM = "HELP";
 const char STR_Command_DEBUG[] PROGMEM = "DEBUG";
 const char STR_Command_SETSLOPE[] PROGMEM = "SETSLOPE";
 const char STR_Command_SETINTERCEPT[] PROGMEM = "SETINTERCEPT";
+const char STR_Command_OUTPUTRAW[] PROGMEM = "OUTPUTRAW";
 
 // State Variables
 char * DATA_IN;
@@ -102,7 +103,19 @@ uint8_t BOOT_RESET_VECTOR = 0;
 float RF_FREQ_SLOPE = 0.0;
 uint8_t RF_FREQ_INTERCEPT = 0;
 uint8_t PRINTING_RATE = 1;
+uint8_t OUTPUTRAW = 0;
 
+// Default calibration tables
+const uint8_t RF_CAL_DEFAULTS_SLOPE[27] = \
+		{173, 173, 173, 173, 173, 173, 173, 173, 173, 173, \
+		 173, 173, 173, 173, 173, 173, 173, 173, 173, 173, \
+		 173, 173, 173, 173, 173, 173, 173};
+const uint8_t RF_CAL_DEFAULTS_INTERCEPT[27] = \
+		{68, 68, 68, 68, 68, 68, 68, 68, 68, 68, \
+		 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, \
+		 68, 68, 68, 68, 68, 68, 68};
+		 
+		 
 /** LUFA CDC Class driver interface configuration and state information.
  * This structure is passed to all CDC Class driver functions, so that
  * multiple instances of the same class within a device can be
@@ -144,6 +157,7 @@ static inline void run_lufa(void);
 
 // EEPROM Read & Write
 static inline void EEPROM_Reset(void);
+static inline void EEPROM_Init(void);
 static inline void EEPROM_Write_RF_Cal_Slope(uint8_t span, float value);
 static inline float EEPROM_Read_RF_Cal_Slope(uint8_t span);
 static inline void EEPROM_Write_RF_Cal_Intercept(uint8_t span, uint8_t value);

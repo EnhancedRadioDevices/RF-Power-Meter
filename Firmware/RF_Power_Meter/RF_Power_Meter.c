@@ -150,9 +150,13 @@ int main(void) {
 			float temp = (average * (ADC_V_REF / 1024.0));
 			
 			// Convert the voltage value into a dBm reading
-			temp = (temp / RF_FREQ_SLOPE) - RF_FREQ_INTERCEPT + 19.95;
+			if (OUTPUTRAW == 0) {
+				temp = (temp / RF_FREQ_SLOPE) - RF_FREQ_INTERCEPT + 19.95;
+				fprintf(&USBSerialStream, "\r\n%.2f dBm", temp);
+			} else {
+				fprintf(&USBSerialStream, "\r\n%.3f V", temp);
+			}
 			
-			fprintf(&USBSerialStream, "\r\n%.2f", temp);
 			schedule_read_rf = 0;
 			
 			Set_LED(0);
@@ -238,6 +242,15 @@ static inline void INPUT_Parse(void) {
 			return;
 		}
 	}
+	// OUTPUTRAW - Toggle outputting raw voltage values instead of the calculated dBm values
+	if (strncasecmp_P(DATA_IN, STR_Command_OUTPUTRAW, 9) == 0) {
+		if (OUTPUTRAW == 0) {
+			OUTPUTRAW = 1;
+		} else {
+			OUTPUTRAW = 0;
+		}
+		return;
+	}
 	// F - Set frequency to help calibrate readings
 	if (*DATA_IN == 'F' || *DATA_IN == 'f') {
 		DATA_IN += 1;
@@ -293,6 +306,14 @@ static inline void printPGMStr(PGM_P s) {
 static inline void EEPROM_Reset(void) {
 	for (uint16_t i = 0; i < 512; i++) {
 		eeprom_update_byte((uint8_t*)(i), 255);
+	}
+}
+
+// Initialize the EEPROM with default calibration values
+static inline void EEPROM_Init(void) {
+	for (uint8_t i = 0; i < 27; i++) {
+		eeprom_update_byte((uint8_t*)(EEPROM_OFFSET_RF_CAL_SLOPE + i), RF_CAL_DEFAULTS_SLOPE[i]);
+		eeprom_update_byte((uint8_t*)(EEPROM_OFFSET_RF_CAL_INTERCEPT + i), RF_CAL_DEFAULTS_INTERCEPT[i]);
 	}
 }
 
