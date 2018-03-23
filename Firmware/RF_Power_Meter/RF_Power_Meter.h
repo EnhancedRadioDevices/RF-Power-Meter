@@ -36,6 +36,7 @@
 #define SOFTWARE_STR "\r\nERD RF Power Meter"
 #define HARDWARE_VERS "1.2"
 #define SOFTWARE_VERS "1.1"
+#define EEPROM_VERS 1
 
 // Serial input
 #define DATA_BUFF_LEN 32
@@ -56,6 +57,7 @@
 #define EEPROM_OFFSET_RF_CAL_SLOPE 0 // 1 byte * 27 Values (100MHz blocks) - Calibrate the frequency response slope
 #define EEPROM_OFFSET_RF_CAL_INTERCEPT 27 // 1 byte * 27 Values (100MHz Blocks) - Calibrate the frequency response intercept
 //#define EEPROM_OFFSET_NEXT 54
+#define EEPROM_OFFSET_EEPROM_INIT 128
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~ Globals
@@ -107,13 +109,13 @@ uint8_t OUTPUTRAW = 0;
 
 // Default calibration tables
 const uint8_t RF_CAL_DEFAULTS_SLOPE[27] = \
-		{173, 173, 173, 173, 173, 173, 173, 173, 173, 173, \
-		 173, 173, 173, 173, 173, 173, 173, 173, 173, 173, \
-		 173, 173, 173, 173, 173, 173, 173};
+		{173, 173, 173, 173, 173, 173, 173, 172, 172, 172, \
+		 172, 172, 172, 172, 172, 171, 171, 171, 171, 171, \
+		 171, 171, 171, 171, 172, 172, 172};
 const uint8_t RF_CAL_DEFAULTS_INTERCEPT[27] = \
-		{68, 68, 68, 68, 68, 68, 68, 68, 68, 68, \
-		 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, \
-		 68, 68, 68, 68, 68, 68, 68};
+		{68, 68, 68, 68, 68, 69, 69, 69, 69, 70, \
+		 70, 70, 70, 70, 70, 71, 70, 71, 73, 72, \
+		 71, 71, 71, 71, 71, 72, 73};
 		 
 		 
 /** LUFA CDC Class driver interface configuration and state information.

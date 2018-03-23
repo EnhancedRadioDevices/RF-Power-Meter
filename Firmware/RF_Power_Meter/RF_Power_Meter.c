@@ -40,9 +40,13 @@ int main(void) {
 	// USB interface so that it can be used with the stdio.h functions
 	USB_Init();
 	CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
+	run_lufa();
 
 	// Enable interrupts
 	GlobalInterruptEnable();
+
+	// Short delay during startup
+	_delay_ms(2000);
 
 	// Print startup message
 	printPGMStr(PSTR(SOFTWARE_STR));
@@ -55,6 +59,14 @@ int main(void) {
 
 	// Enable the ADC
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0); // Enable ADC, clocked by /128 divider
+	
+	// Check that the EEPROM has been initialized
+	if (eeprom_read_byte((uint8_t*)(EEPROM_OFFSET_EEPROM_INIT)) != EEPROM_VERS) {
+		printPGMStr(PSTR("\r\nEEPROM not initialized. Initializing..."));
+		run_lufa();
+		EEPROM_Init();
+		eeprom_update_byte((uint8_t*)(EEPROM_OFFSET_EEPROM_INIT), EEPROM_VERS);
+	}
 	
 	// Load calibration values
 	Load_RF_Calibration(1);
@@ -109,6 +121,7 @@ int main(void) {
 				case 29:
 					// Ctrl-] reset all eeprom values
 					EEPROM_Reset();
+					EEPROM_Init();
 					INPUT_Clear();
 					break;
 					
@@ -346,7 +359,10 @@ static inline uint8_t EEPROM_Read_RF_Cal_Intercept(uint8_t span) {
 // Dump debugging data
 static inline void DEBUG_Dump(void) {
 	// Print hardware and software versions
-	fprintf(&USBSerialStream, "\r\nV%s,%s", HARDWARE_VERS, SOFTWARE_VERS);
+	fprintf(&USBSerialStream, "\r\nHW V%s, SW V%s", HARDWARE_VERS, SOFTWARE_VERS);
+	
+	// Print eeprom version
+	fprintf(&USBSerialStream, "\r\nEEPROM V%i", eeprom_read_byte((uint8_t*)(EEPROM_OFFSET_EEPROM_INIT)));
 	
 	// Print current calibration values
 	printPGMStr(PSTR("\r\n\r\nCurrent Calibration Values: "));
